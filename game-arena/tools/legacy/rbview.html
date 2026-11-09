@@ -1,0 +1,34 @@
+<!doctype html><html><head><meta charset="utf-8"><style>body{margin:0;background:#0b1a1f}canvas{display:block}</style></head><body>
+<script src="/three.min.js"></script><script src="/GLTFLoader.js"></script><script src="/SkeletonUtils.js"></script><script src="/players.js"></script>
+<script>
+const W=window.W||1600,H=window.H||800; const r=new THREE.WebGLRenderer({antialias:true}); r.setSize(W,H); r.outputEncoding=THREE.sRGBEncoding; r.toneMapping=THREE.ACESFilmicToneMapping; r.shadowMap.enabled=true; document.body.appendChild(r.domElement);
+const s=new THREE.Scene(); s.background=new THREE.Color(0x14261d);
+s.add(new THREE.HemisphereLight(0xdde8ff,0x203020,0.6)); const d=new THREE.DirectionalLight(0xfff0dd,1.0); d.position.set(4,9,7); d.castShadow=true; d.shadow.mapSize.set(2048,2048); Object.assign(d.shadow.camera,{left:-12,right:12,top:6,bottom:-6}); s.add(d);
+const g=new THREE.Mesh(new THREE.PlaneGeometry(60,30),new THREE.MeshStandardMaterial({color:0x2f7d44,roughness:.95})); g.rotation.x=-Math.PI/2; g.receiveShadow=true; s.add(g);
+const cam=new THREE.PerspectiveCamera(30,W/H,0.1,100);
+const {loadAssets,Player,P}=GAPlayers;
+loadAssets('/assets/').then(()=>{
+  const kits=[{shirt:'#ffb547',shorts:'#13222a',socks:'#ffb547',trim:'#13222a',ink:'#13222a'},{shirt:'#c8102e',shorts:'#ffffff',socks:'#c8102e',trim:'#ffffff',ink:'#ffffff'},{shirt:'#1d4b8f',shorts:'#1d4b8f',socks:'#ffffff',trim:'#f2efe6',ink:'#ffffff'},{shirt:'#2b2f36',shorts:'#2b2f36',socks:'#2b2f36',trim:'#b6f05a',ink:'#b6f05a'}];
+  const tones=['natural','deep','darker','deep'];
+  const spec = window.SPEC || [
+    ['idle',{speed:0,t:1.2}],['sprint a',{speed:6.6,t:0.1}],['sprint b',{speed:6.6,t:0.4}],
+    ['back',{pose:P.strike(0.34)}],['contact',{pose:P.strike(0.5)}],['follow',{pose:P.strike(0.74)}],
+    ['keeper',{pose:P.keeperReady(0),gk:1}],['dive',{pose:P.dive(1,'mid'),gk:1,roll:1.25,y:0.55}],['jockey',{pose:P.jockey(0)}],['slide',{pose:P.slide(1),pitch:0.95,y:0.08}],['cheer',{once:'m_cheer_03',t:1.4}]
+  ];
+  spec.forEach(([n,o],i)=>{
+    const kit={...kits[o.gk?3:i%3], number:[9,4,10,7,11,1][i%6], name:['Okafor','Bello','Adeyemi','Eze','Musa','Obi'][i%6], tone:tones[i%4]};
+    const p=new Player({model: i%3===2?'sm02':'sm03', kit, gloves:o.gk?'#b6f05a':null});
+    p.pos.set((i-(spec.length-1)/2)*(window.GAP||1.25),0,0); p.heading = window.HEAD!==undefined?window.HEAD:-Math.PI/2+0.45;
+    s.add(p.root);
+    if(o.once) p.playOnce(o.once,{fade:0});
+    p.setSpeed(o.speed||0);
+    if(typeof o.pose==='string') o.pose = {kr:P.keeperReady(0), j:P.jockey(0)}[o.pose];
+    if(o.pose){ p.act(()=>o.pose); p.procW=1; }
+    if(o.back) p.heading = Math.PI/2+0.3;
+    const steps=Math.round((o.t||0.2)/0.02); for(let k=0;k<steps;k++) p.update(0.02);
+    if(o.roll) p.root.rotation.x = o.roll; if(o.pitch) p.root.rotation.z = o.pitch; if(o.y) p.root.position.y=o.y;
+  });
+  const span=spec.length*(window.GAP||1.25); cam.position.set(window.CX||0, 1.25, window.CZ||span*0.72); cam.lookAt(window.CX||0,0.9,0);
+  r.render(s,cam); window.READY=true;
+}).catch(e=>{console.error(e.message+" "+e.stack); window.READY=true;});
+</script></body></html>

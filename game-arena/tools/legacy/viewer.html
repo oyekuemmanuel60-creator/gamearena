@@ -1,0 +1,29 @@
+<!doctype html><html><head><meta charset="utf-8"><style>body{margin:0;background:#0b1a1f}canvas{display:block}</style></head><body>
+<script src="https://lib.test/three.min.js"></script>
+<script src="https://lib.test/GLTFLoader.js"></script>
+<script src="https://lib.test/SkeletonUtils.js"></script>
+<script src="https://lib.test/character.js"></script>
+<script>
+const W=1600,H=700; const r=new THREE.WebGLRenderer({antialias:true}); r.setSize(W,H); r.outputEncoding=THREE.sRGBEncoding; r.toneMapping=THREE.ACESFilmicToneMapping; r.shadowMap.enabled=true; document.body.appendChild(r.domElement);
+const s=new THREE.Scene(); s.background=new THREE.Color(0x1d3a28);
+s.add(new THREE.HemisphereLight(0xdde8ff,0x203020,0.6)); const d=new THREE.DirectionalLight(0xfff0dd,1.1); d.position.set(4,8,6); d.castShadow=true; d.shadow.camera.left=-10; d.shadow.camera.right=10; d.shadow.camera.top=6; d.shadow.camera.bottom=-6; s.add(d);
+const g=new THREE.Mesh(new THREE.PlaneGeometry(40,20),new THREE.MeshStandardMaterial({color:0x2f7d44})); g.rotation.x=-Math.PI/2; g.receiveShadow=true; s.add(g);
+const cam=new THREE.PerspectiveCamera(30,W/H,0.1,100);
+const VIEW = window.VIEW || 'front';
+new THREE.GLTFLoader().load('https://lib.test/player.glb', (gl)=>{
+  const {Character,P}=FootballChar;
+  const poses = window.POSES || [
+    ['idle', P.idle(0)], ['run a', P.run(0.4,0.6)], ['run b', P.run(2.0,0.9)], ['back', P.strike(0.32,'R')], ['contact', P.strike(0.5,'R')], ['follow', P.strike(0.72,'R')],
+    ['keeper', P.keeperReady(0)], ['jockey', P.jockey(0)], ['slide', P.slide(1), {pitch:-1.15, y:0.35}], ['dive', P.dive(1,'mid'), {roll:1.3, y:0.55}], ['celebrate', P.celebrate(0.2)]
+  ];
+  poses.forEach(([n,p,o],i)=>{
+    const c=new Character(gl.scene,{main:i%2?0xffb547:0xd6453d, trim:0x13222a, sock:i%2?0xffb547:0xf2efe6, skin:[0x6b4433,0x8a5a44,0x4a2e22][i%3], beard:i%3===0, gloves: n==='keeper'||n==='dive'?0xb6f05a:null});
+    c.root.position.set((i-(poses.length-1)/2)*1.4,(o&&o.y)||0,0);
+    c.root.rotation.y = VIEW==='side' ? 0 : -Math.PI/2 + 0.5; if(o&&o.yaw!==undefined) c.root.rotation.y=o.yaw; // face camera-ish
+    if(o&&o.roll) c.root.rotation.x=o.roll; if(o&&o.pitch) c.root.rotation.z=-o.pitch;
+    s.add(c.root); c.apply(p);
+  });
+  const span=poses.length*1.4; cam.position.set(window.CX||0, 1.3, window.CZ||span*0.62); cam.lookAt(window.CX||0,0.9,0);
+  r.render(s,cam); window.READY=true;
+});
+</script></body></html>

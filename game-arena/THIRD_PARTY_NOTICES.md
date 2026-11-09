@@ -1,0 +1,24 @@
+# Third-party notices
+
+## Microsoft Rocketbox Avatar Library
+Files: `assets/sm02*`, `assets/sm03*`, `assets/anims.json` (converted from the original FBX files)
+Source: https://github.com/microsoft/Microsoft-Rocketbox
+Licence: MIT. Copyright (c) Microsoft Corporation.
+
+## three.js
+Files: `lib/GLTFLoader.js`, `lib/SkeletonUtils.js` (r128); three.js itself is loaded from cdnjs.
+Source: https://github.com/mrdoob/three.js
+Licence: MIT. Copyright © 2010-2021 three.js authors.
+
+## Fonts
+Big Shoulders Display and Barlow, loaded from Google Fonts. Licence: SIL Open Font License 1.1.
+
+---
+
+MIT License (applies to the components above)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
